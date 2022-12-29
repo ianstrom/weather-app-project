@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <meta http-equiv="X-UA-Compatible" content="ie=edge"/>
+    <link rel="stylesheet" href="./style.css"/>
+    <title>Weather App</title>
+    <script type="text/javascript">
+        function getSearch() {
+            
+            const city = document.querySelector('#search-city').value
+            const state = document.querySelector('#search-state').value
+            const searchToGeo = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&appid=ef40e215f47f8d8759f726884d19dc94`;
+
+            fetch(searchToGeo)
+            .then(data => {
+                return data.json();
+            })
+            .then(data => {
+                console.log(data)
+                const {lat} = data[0]
+                const {lon} = data[0]
+
+                const api1 = `https://api.openweathermap.org/data/3.0/onecall?lat=${lat}&lon=${lon}&exclude=minutely,alerts&units=imperial&appid=ef40e215f47f8d8759f726884d19dc94`
+
+                fetch(api1)
+                .then(data => {
+                    return data.json();
+                })
+                .then(data => {
+                    let temperatureDegree = document.querySelector(".temperature-degree");
+                    let hourlySection = document.querySelector(".hourly-section")
+                    { console.log(data)
+                    const {temp} = data.current
+                    temperatureDegree.textContent = Math.round(temp);
+                   }
+                   
+                    for (let i = 0; i < data.hourly.length; i++) {
+                        const {temp, pop} = data.hourly[i]
+                        const {description, icon, id} = data.hourly[i].weather[0]
+                        
+                        const hourlyWeather = document.createElement('div')
+                        hourlyWeather.className = 'hourly-weather'
+                        hourlySection.appendChild(hourlyWeather)
+                        
+                        const hourlyTemp = document.createElement('div')
+                        hourlyTemp.className = 'hourly-temp'
+                        hourlyTemp.textContent = Math.round(temp) + '°F'
+                        hourlyWeather.appendChild(hourlyTemp)
+    
+                        const hourlyIcon = document.createElement('img')
+                        hourlyIcon.className= 'hourly-icon'
+                        hourlyIcon.src = "http://openweathermap.org/img/wn/" + icon + "@2x.png"
+                        hourlyWeather.appendChild(hourlyIcon)
+                        
+                        const hourlyPop = document.createElement('div')
+                        hourlyPop.className = 'hourly-pop'
+                        hourlyPop.textContent = Math.round(pop * 100) + '%'
+                        hourlyWeather.appendChild(hourlyPop)
+    
+                        function formatAMPM(date) {
+                            const currentHour = new Date().getHours();
+                            let hour = (currentHour + i) % 24;
+                            if (hour === 0) {
+                                hour = 12;
+                            }
+                            let ampm = 'am';
+                            if (hour > 11) {
+                                ampm = 'pm';
+                                if (hour > 12) {
+                                hour -= 12;
+                                }
+                            }
+                            return `${hour}${ampm}`;
+                        };
+    
+                        const hour = document.createElement('div')
+                        hour.className = 'hour'
+                        hour.textContent = formatAMPM(new Date);
+                        hourlyWeather.appendChild(hour)
+                    }
+                })
+            })
+    }
+    </script>
+</head>
+<body>
+    <div class="temperature">
+        <div class="search-bar">
+            <form action="javascript:getSearch()">
+                <input type="text" placeholder="Enter City" id="search-city" class="search-input">
+                <input type="text" placeholder="Enter State Abbreviation" id="search-state" class="search-input">
+                <button type="submit" class="button"><i class='fa fa-search'></i></button>
+            </form>
+        </div>
+        <div class="degree-section">
+            <h2 class="temperature-degree"></h2>
+            <span>°F</span>
+        </div>
+        <div class="hourly-section">
+            <div class="hourly-weather">
+                <div class="hourly-temp"></div>
+                <div class="hourly-pop"></div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="index.js"></script>
+</body>
