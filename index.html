@@ -12,7 +12,7 @@
             
             const city = document.querySelector('#search-city').value
             const state = document.querySelector('#search-state').value
-            const searchToGeo = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&appid=ef40e215f47f8d8759f726884d19dc94`;
+            const searchToGeo = `https://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&appid=ef40e215f47f8d8759f726884d19dc94`;
             function removeAllHourlyWeather (hourlyWeather) {
                 while (hourlyWeather.firstChild) {
                     hourlyWeather.removeChild(hourlyWeather.firstChild)
