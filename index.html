@@ -12,6 +12,11 @@
             const city = document.querySelector('#search-city').value
             const state = document.querySelector('#search-state').value
             const searchToGeo = `http://api.openweathermap.org/geo/1.0/direct?q=${city},${state},US&appid=ef40e215f47f8d8759f726884d19dc94`;
+            function removeAllHourlyWeather (hourlyWeather) {
+                while (hourlyWeather.firstChild) {
+                    hourlyWeather.removeChild(hourlyWeather.firstChild)
+                }
+            }
 
             fetch(searchToGeo)
             .then(data => {
@@ -31,6 +36,7 @@
                 .then(data => {
                     let temperatureDegree = document.querySelector(".temperature-degree");
                     let hourlySection = document.querySelector(".hourly-section")
+                    removeAllHourlyWeather(hourlySection)
                     { console.log(data)
                     const {temp} = data.current
                     temperatureDegree.textContent = Math.round(temp);
